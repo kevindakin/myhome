@@ -11,6 +11,47 @@ const easeBackBig = "back.inOut(4)";
 // FUNCTION DECLARATIONS
 //
 
+function smoothScroll() {
+    let lenis;
+    if (Webflow.env("editor") === undefined) {
+    lenis = new Lenis({
+        lerp: 0.3,
+        wheelMultiplier: 0.7,
+        gestureOrientation: "vertical",
+        normalizeWheel: false,
+        smoothTouch: false
+    });
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    }
+    $("[data-lenis-start]").on("click", function () {
+    lenis.start();
+    });
+    $("[data-lenis-stop]").on("click", function () {
+    lenis.stop();
+    });
+    $("[data-lenis-toggle]").on("click", function () {
+    $(this).toggleClass("stop-scroll");
+    if ($(this).hasClass("stop-scroll")) {
+        lenis.stop();
+    } else {
+        lenis.start();
+    }
+    });
+    
+    lenis.on('scroll', (e) => {
+    const menu = document.querySelector(".nav_content");
+    if (menu.classList.contains("is-open")) {
+        e.preventDefault = false; 
+    } else {
+        e.preventDefault = true; 
+    }
+    });
+}
+
 function disableScrolling() {
   document.body.classList.add("no-scroll");
   lenis.stop();
@@ -714,14 +755,25 @@ function initModals() {
   });
 }
 
+function copyright() {
+    const copyrightDate = document.querySelector('[data-js="copyright-date"]');
+
+    if (copyrightDate) {
+        const currentYear = new Date().getFullYear();
+        copyrightDate.textContent = currentYear;
+    }
+}
+
 //
 // FUNCTION INITS
 //
 
+smoothScroll();
 mobileMenu();
 navDropdown();
 accordion();
 initModals();
+copyright();
 
 // Desktop Only Functions
 
